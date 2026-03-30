@@ -1,0 +1,64 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.taewan.hm.movie.dao.MovieDao">
+
+    <select id="selectMovieCount"
+        resultType="_int">
+        SELECT COUNT(MOVIE_ID)
+          FROM MOVIE
+    </select>
+    <select id="selectMovieList"
+        resultType="com.taewan.hm.movie.vo.MovieVO">
+        SELECT MOVIE_ID
+		     , POSTER_URL
+		     , TITLE
+		     , MOVIE_RATING
+		     , TO_CHAR(OPEN_DATE, 'YYYY-MM-DD') AS OPEN_DATE
+		     , OPEN_COUNTRY
+		     , RUNNING_TIME
+		     , INTRODUCE
+		     , SYNOPSIS
+		     , ORIGINAL_TITLE
+		     , STATE
+		     , LANGUAGE
+		     , BUDGET
+		     , PROFIT
+		  FROM MOVIE
+    </select>
+    
+    <insert id="insertNewMovie"
+            parameterType="com.taewan.hm.movie.vo.MovieVO">
+            INSERT INTO MOVIE
+                   (MOVIE_ID
+                  , POSTER_URL
+                  , TITLE
+                  , MOVIE_RATING
+                  , OPEN_DATE
+                  , OPEN_COUNTRY
+                  , RUNNING_TIME
+                  , INTRODUCE
+                  , SYNOPSIS
+                  , ORIGINAL_TITLE
+                  , STATE
+                  , LANGUAGE
+                  , BUDGET
+                  , PROFIT
+                  ) VALUES
+                   (('MV-' || TO_CHAR(SYSDATE, 'YYYYMMDD-') || LPAD(SEQ_MOVIE_PK.NEXTVAL, 6, '0'))
+                  , #{posterUrl}
+                  , #{title}
+                  , #{movieRating}
+                  , SYSDATE
+                  , #{openCountry}
+                  , #{runningTime}
+                  , #{introduce}
+                  , #{synopsis}
+                  , #{originalTitle}
+                  , #{state}
+                  , #{language}
+                  , #{budget}
+                  , #{profit})
+    </insert>
+</mapper>

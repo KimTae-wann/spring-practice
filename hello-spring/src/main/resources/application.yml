@@ -1,0 +1,28 @@
+# 콘솔 로그 레벨 변경
+logging:
+  level:
+    root: debug
+
+# spring.application.name=hello-spring
+
+# mybatis 연동 설정
+# classpath --> src/main/java, src/main/resources, src/test/java, src/test/resources 를 얘기함
+# basepackage --> com.ktdsunitversity.edu
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:com/ktdsuniversity/edu/**/mapper/*Mapper.xml
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:XE
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    username: SPRING_BOOT
+    password: 1234
+  application:
+    name: hello-spring
+
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+

@@ -1,0 +1,54 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ktdsuniversity.edu.members.dao.MembersDao">
+	<insert id="insertNewMembers" parameterType="com.ktdsuniversity.edu.members.vo.MembersVO">
+        INSERT INTO MEMBERS
+	   (EMAIL
+	  , NAME
+	  , PASSWORD)
+	  VALUES
+	   (#{email}
+	  , #{name}
+	  , #{password})
+	</insert>
+	
+	<select id="selectMemberByUserEmail" resultType="com.ktdsuniversity.edu.members.vo.MembersVO">
+	   SELECT EMAIL
+	        , NAME
+	        , PASSWORD
+	     FROM MEMBERS
+	    WHERE EMAIL = #{email}
+	</select>
+	
+	<update id="updateMemberByUserEmail"
+	        parameterType="com.ktdsuniversity.edu.members.vo.MembersVO">
+	 UPDATE MEMBERS
+	    SET EMAIL = #{email}
+	      , NAME = #{name}
+	      , PASSWORD = #{password}
+	  WHERE EMAIL = #{email}
+	</update>
+	
+	<delete id="deleteMemberByUserEmail"
+	        parameterType="string">
+	 DELETE
+	   FROM MEMBERS
+	  WHERE EMAIL = #{_parameter}
+	</delete>
+	
+	<select id="selectMemberCount"
+	        resultType="_int">
+	 SELECT COUNT(EMAIL)
+	   FROM MEMBERS        
+	</select>
+	
+	<select id="selectMemberList"
+	        resultType="com.ktdsuniversity.edu.members.vo.MembersVO">
+	 SELECT EMAIL
+	      , NAME
+	      , PASSWORD
+	   FROM MEMBERS
+	</select>
+</mapper>

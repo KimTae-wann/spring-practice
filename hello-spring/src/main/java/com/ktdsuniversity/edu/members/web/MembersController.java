@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.ktdsuniversity.edu.members.service.MembersService;
 import com.ktdsuniversity.edu.members.vo.MembersVO;
 import com.ktdsuniversity.edu.members.vo.SearchResultVO;
+import com.ktdsuniversity.edu.members.vo.request.WriteVO;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class MembersController {
@@ -27,12 +32,19 @@ public class MembersController {
 	
 	
 	@PostMapping("/regist")
-	public String doRegiAction(MembersVO membersVO) {
-		System.out.println(membersVO.getEmail());
-		System.out.println(membersVO.getName());
-		System.out.println(membersVO.getPassword());
+	public String doRegiAction(@Valid @ModelAttribute WriteVO writeVO
+								, BindingResult bindingResult
+								, Model model) {
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("inputData", writeVO);
+			return "members/regi";
+		}
 		
-		boolean createMember = this.membersService.createNewMembers(membersVO);
+		System.out.println(writeVO.getEmail());
+		System.out.println(writeVO.getName());
+		System.out.println(writeVO.getPassword());
+		
+		boolean createMember = this.membersService.createNewMembers(writeVO);
 		
 		System.out.println("회원 생성 성공? " + createMember);
 		

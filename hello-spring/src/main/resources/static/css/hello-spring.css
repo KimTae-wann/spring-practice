@@ -9,6 +9,26 @@ body {
   color: #333;
 }
 
+div.validation-error {
+	color: #f00;
+	font-weight: 600;
+	font-size:0.85rem;
+	margin-top: 0.3rem;
+	padding: 0.425rem;
+	background-color: #f004;
+}
+
+/* list style 시작 */
+ul.vertical-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+/* list style 끝 */
+
 pre {
   margin: 0;
   font-size: 1rem;
@@ -99,15 +119,44 @@ div.list > table.grid > tbody > tr > td:nth-child(2) {
 /* 글쓰기 style 시작 */
 div.update {
   grid-template-columns: 5rem 1fr;
-  grid-template-rows: 1.75rem 1.75rem 20rem 1fr;
+  grid-template-rows: 1.75rem 1.75rem minmax(1.75rem, auto) 20rem 1fr;
   row-gap: 0.625rem;
+}
+
+div.update > div.attach-files {
+  display: grid;
+  grid-template-columns: 1fr minmax(80px, auto);
+  gap: 0.625rem;
+}
+
+div.update > div.attach-files > ul.vertical-list {
+	grid-column: 1 / -1;
+}
+
+div.update > div.attach-files > ul.vertical-list > li > input[type="checkbox"]:checked + a {
+	color: #f00;
+	text-decoration: line-through;
 }
 
 div.write {
   grid-template-columns: 5rem 1fr;
-  grid-template-rows: 1.75rem 1.75rem 20rem 1fr;
+  grid-template-rows: repeate(3, minmax(1.75rem, auto)) 20rem 1fr;
   row-gap: 0.625rem;
 }
+
+div.write > div.input-div > input {
+	width: 100%;
+	display: block;
+}
+
+div.write > div.attach-files,
+div.update > div.attach-files
+ {
+  display: grid;
+  grid-template-columns: 1fr minmax(80px, auto);
+  gap: 0.625rem;
+}
+
 /* 글쓰기 style 끝 */
 
 /* 회원가입 style 시작 */
@@ -131,6 +180,8 @@ div.member-view {
   align-items: center;
 }
 /* 회원가입 style 끝 */
+
+
 
 /* 게시글 내용 조회 style 시작 */
 div.view {

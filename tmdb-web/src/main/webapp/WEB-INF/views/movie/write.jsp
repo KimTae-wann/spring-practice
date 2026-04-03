@@ -4,21 +4,17 @@ pageEncoding="UTF-8"%>
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>regi movie</title>
+    <title>register movie</title>
     <link rel="stylesheet" type="text/css" href="/css/tmdb-write.css" />
   </head>
   <body>
     <h1>영화 등록 페이지</h1>
-    <
-    <form method="post" action="/write">
+    <form method="post" action="/write" enctype="multipart/form-data">
       <div class="grid write">
-        <label for="posterUrl">포스터 URL</label>
-        <input
-          type="text"
-          id="posterUrl"
-          name="posterUrl"
-          placeholder="포스터 URL을 입력하세요."
-        />
+        <label for="posterImgFile">포스터 URL</label>
+        <div id="poster-image" class="poster-image">
+          <input type="file" name="posterImgFile"/>
+        </div>
 
         <label for="title">제목</label>
         <input
@@ -51,7 +47,7 @@ pageEncoding="UTF-8"%>
           name="runningTime"
           placeholder="상영시간을 입력하세요."
         />
-        
+
         <label for="introduce">개요</label>
         <input
           type="text"

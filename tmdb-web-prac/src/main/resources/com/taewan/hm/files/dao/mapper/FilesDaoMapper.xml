@@ -1,0 +1,25 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.taewan.hm.files.dao.FilesDao">
+    <insert id="insertPosterImageFile"
+            parameterType="com.taewan.hm.files.vo.request.UploadPosterVO">
+            INSERT INTO FILES
+             (FILE_NUM
+            , FILE_GROUP_ID
+            , OBFUSCATE_NAME
+            , DISPLAY_NAME
+            , EXTEND_NAME
+            , FILE_LENGTH
+            , FILE_PATH)
+            VALUES
+            ( #{fileNum}
+            , #{fileGroupId}
+            , #{obfuscateName}
+            , #{displayName}
+            , #{extendName}
+            , #{fileLength}
+            , #{filePath})
+    </insert>
+</mapper>

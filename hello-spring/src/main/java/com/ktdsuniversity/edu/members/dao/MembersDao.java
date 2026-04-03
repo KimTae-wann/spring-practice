@@ -4,11 +4,12 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.ktdsuniversity.edu.members.vo.request.WriteVO;
 import com.ktdsuniversity.edu.members.vo.MembersVO;
 
 @Mapper
 public interface MembersDao {
-	int insertNewMembers(MembersVO membersVO);
+	int insertNewMembers(WriteVO wrtieVO);
 
 	MembersVO selectMemberByUserEmail(String userEmail);
 

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ktdsuniversity.edu.board.enums.ReadType;
+import com.ktdsuniversity.edu.members.vo.request.WriteVO;
 import com.ktdsuniversity.edu.members.dao.MembersDao;
 import com.ktdsuniversity.edu.members.vo.MembersVO;
 import com.ktdsuniversity.edu.members.vo.SearchResultVO;
@@ -17,8 +17,8 @@ public class MembersServiceImpl implements MembersService{
 	private MembersDao membersDao;
 	
 	@Override
-	public boolean createNewMembers(MembersVO membersVO) {
-		int insertCount = this.membersDao.insertNewMembers(membersVO);
+	public boolean createNewMembers(WriteVO writeVO) {
+		int insertCount = this.membersDao.insertNewMembers(writeVO);
 		System.out.println("생성된 회원의 수? " + insertCount);
 		if (insertCount == 1) {
 			System.out.println("성공");

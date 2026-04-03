@@ -1,0 +1,78 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ktdsuniversity.edu.files.dao.FilesDao">
+    <insert id="insertAttachFile"
+            parameterType="com.ktdsuniversity.edu.files.vo.request.UploadVO">
+            INSERT INTO FILES
+             (FILE_NUM
+            , FILE_GROUP_ID
+            , OBFUSCATE_NAME
+            , DISPLAY_NAME
+            , EXTEND_NAME
+            , FILE_LENGTH
+            , FILE_PATH)
+            VALUES
+            ((SELECT NVL(MAX(FILE_NUM), 0) + 1
+                FROM FILES
+               WHERE FILE_GROUP_ID = #{fileGroupId})
+            , #{fileGroupId}
+            , #{obfuscateName}
+            , #{displayName}
+            , #{extendName}
+            , #{fileLength}
+            , #{filePath})
+    </insert>
+    
+    <select id="selectFilesByFileGroupIdAndFileNum"
+            parameterType="com.ktdsuniversity.edu.files.vo.request.SearchFileVO"
+            resultType="com.ktdsuniversity.edu.files.vo.response.DownloadVO">
+            SELECT DISPLAY_NAME
+		         , EXTEND_NAME
+		         , FILE_LENGTH
+		         , FILE_PATH
+		      FROM FILES
+		     WHERE FILE_GROUP_ID = #{fileGroupId}
+		       AND FILE_NUM = #{fileNum}
+    </select>
+    
+    <select id="selectFilesByFileGroupFileNums"
+            parameterType="com.ktdsuniversity.edu.board.vo.request.UpdateVO"
+            resultType="string">
+            SELECT FILE_PATH
+			  FROM FILES
+			 WHERE FILE_GROUP_ID = #{id}
+			   AND FILE_NUM IN 
+			   <foreach collection="deleteFileNum" 
+			            item="fileNum" 
+			            open="("  
+			            close=")" 
+			            separator=", ">
+    			   #{fileNum}
+			   </foreach> <!-- (1, 2, 3) -->
+    </select>
+    
+    <delete id="deleteFilesByFileGroupIdAndFileNums"
+            parameterType="com.ktdsuniversity.edu.board.vo.request.UpdateVO">
+            DELETE
+              FROM FILES
+             WHERE FILE_GROUP_ID = #{id}
+               AND FILE_NUM IN 
+               <foreach collection="deleteFileNum" 
+                        item="fileNum" 
+                        open="("  
+                        close=")" 
+                        separator=", ">
+                   #{fileNum}
+               </foreach> <!-- (1, 2, 3) -->
+    </delete>
+    
+    <select id="selectFilePathByFileGroupId"
+            parameterType="string"
+            resultType="string">
+        SELECT FILE_PATH
+          FROM FILES
+         WHERE FILE_GROUP_ID = #{_parameter}
+    </select>
+</mapper>

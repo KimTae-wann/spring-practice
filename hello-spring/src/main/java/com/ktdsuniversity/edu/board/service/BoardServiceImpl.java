@@ -1,9 +1,13 @@
 package com.ktdsuniversity.edu.board.service;
 
+import com.ktdsuniversity.edu.files.dao.FilesDao;
+import com.ktdsuniversity.edu.files.helpers.MultipartFileHandler;
+import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ktdsuniversity.edu.board.dao.BoardDao;
 import com.ktdsuniversity.edu.board.enums.ReadType;
@@ -14,12 +18,18 @@ import com.ktdsuniversity.edu.board.vo.request.WriteVO;
 
 @Service // transaction 관리함
 public class BoardServiceImpl implements BoardService{
-
 	/*
 	 * Bean 컨테이너에 들어있는 객체 중 타입이 일치하는 객체를 할당 받는다. DI
 	 */
 	@Autowired
 	private BoardDao boardDao;
+	
+	@Autowired
+	private FilesDao filesDao;
+
+	@Autowired
+	private MultipartFileHandler multipartFileHandler;
+
 	
 	@Override
 	public SearchResultVO findAllBoard() {
@@ -41,7 +51,7 @@ public class BoardServiceImpl implements BoardService{
 		
 		return result;
 	}
-	
+
 	@Override
 	public boolean createNewBoard(WriteVO writeVO) {
 		// dao -> insert 요청
@@ -51,16 +61,19 @@ public class BoardServiceImpl implements BoardService{
 		//    update -> update 된 row의 개수 반환
 		//    delete -> delete 된 row의 개수 반환
 		int insertCount = this.boardDao.insertNewBoard(writeVO);
-		System.out.println("생성된 게시글의 개수? " + insertCount);
+
+		// 첨부 파일 업로드
+		List<MultipartFile> attachFiles = writeVO.getAttachFile();
+		this.multipartFileHandler.upload(attachFiles, writeVO.getId());
+		
 		return insertCount == 1;
 	}
-	
+
 	@Override
 	public BoardVO findBoardByArticleId(String articleId, ReadType readType) {
 		if (readType == ReadType.VIEW) {
 			// 1. 조회수 증가
 			int updateCount = this.boardDao.updateViewCntIncreaseById(articleId);
-			System.out.println("증가된 조회수: " + updateCount);
 		
 			if (updateCount == 0) {
 				return null; // 웹페이지가 멈추지 않는다.
@@ -73,17 +86,46 @@ public class BoardServiceImpl implements BoardService{
 		// 조회한 게시글을 반환
 		return board;
 	}
-	
+
 	@Override
-	public void deleteBoardByArticleId(String articleId) {
-		this.boardDao.deleteBoardById(articleId);
-		return ;
-	}
-	
-	@Override
-	public boolean updateBoardByArticleId(UpdateVO updateVO) {
-		int result = this.boardDao.updateBoardById(updateVO);
-		return result == 1;
+	public boolean deleteBoardByArticleId(String id) {
+		int deleteCount = this.boardDao.deleteBoardById(id);
+		
+		// 삭제하려는 게시글에 첨부된 파일 목록을 가져온다.
+		List<String> filePaths = this.filesDao.selectFilePathByFileGroupId(id);
+		if (filePaths != null && filePaths.size() > 0) {
+			// 파일 목록이 존재하면, 모든 파일들을 제거한다.
+			for (String path: filePaths) {
+				new File(path).delete();
+			}
+		}
+		return deleteCount == 1;
 	}
 
+	@Override
+	public boolean updateBoardByArticleId(UpdateVO updateVO) {
+		int updateCount = this.boardDao.updateBoardById(updateVO);
+		
+		// 선택한 파일들만 삭제
+		if (updateVO.getDeleteFileNum() != null && updateVO.getDeleteFileNum().size() > 0) {
+			// 선택한 파일들의 정보를 조회 --> 파일의 경로 --> 실제 파일을 제거
+			List<String> deleteTargets = this.filesDao.selectFilesByFileGroupFileNums(updateVO);
+			
+			// 선택한 파일들을 FILES 테이블에서 제거
+			// 힘내요 태완님 할 수 있어요
+			for (String target: deleteTargets) {
+				new File(target).delete();
+			}
+			
+			int deleteCount = this.filesDao.deleteFilesByFileGroupIdAndFileNums(updateVO);
+			System.out.println("삭제한 파일 데이터의 수: " + deleteCount);
+		}
+		System.out.println("updateVO.getAttachFile: " + updateVO.getAttachFile());
+		
+		List<MultipartFile> attachFiles = updateVO.getAttachFile();
+		this.multipartFileHandler.upload(attachFiles, updateVO.getId());
+
+		
+		return updateCount == 1;
+	}
 }

@@ -37,11 +37,9 @@ public class TestEndPointController {
 	public String viewHelloJspPage(Model model) {
 		// Model model parameter --> Template Engine(JSP)에게 데이터를 전송시키는 객체
 		// ????
-		System.out.println(model);
 		// name이라는 키(변수명)로 "김태완" 할당해서 템플릿에게 전달
 		model.addAttribute("name", "김태완");
 		model.addAttribute("age", 30);
-		System.out.println(model);
 		
 		
 		// spring.mvc.view.prefix + hellojsp + spring.mvc.view.suffix
@@ -58,8 +56,5 @@ public class TestEndPointController {
 	 * 사용자가 "/" 엔트포인트에 접근하면
 	 * "첫 페이지입니다. 환영합니다"를 브라우저에 보내주는 코드 작성
 	 */
-	@GetMapping("/")
-	public ResponseEntity<String> TestEndPointController () {
-		return new ResponseEntity<>("첫 페이지 입니다. 환영합니다", HttpStatus.OK);
-	}
+	
 }

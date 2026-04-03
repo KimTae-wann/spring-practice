@@ -1,12 +1,13 @@
 package com.ktdsuniversity.edu.board.web;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,8 @@ import com.ktdsuniversity.edu.board.vo.SearchResultVO;
 import com.ktdsuniversity.edu.board.vo.request.UpdateVO;
 import com.ktdsuniversity.edu.board.vo.request.WriteVO;
 
+import jakarta.validation.Valid;
+
 @Controller // EndPoint 생성
 public class BoardController {
 	/*
@@ -26,7 +29,8 @@ public class BoardController {
 	@Autowired
 	private BoardService boardService;
 	
-	@GetMapping("/list")
+	
+	@GetMapping("/")
 	public String viewListPage(Model model) {
 		
 		SearchResultVO searchResult = this.boardService.findAllBoard();
@@ -49,14 +53,26 @@ public class BoardController {
 	}
 	
 	@PostMapping("/write")
-	public String doWriteAction(/*@ModelAttribute 생략 가능*/ WriteVO writeVO) {
-		System.out.println(writeVO.getSubject());
-		System.out.println(writeVO.getEmail());
-		System.out.println(writeVO.getContent());
+	public String doWriteAction(@Valid @ModelAttribute WriteVO writeVO
+								// @Valid의 결과를 받아오는 파라미터
+								// 반드시 동일하게 써줘야 한다.
+								, BindingResult bindingResult
+								, Model model) {
+		// 사용자의 입력값을 검증 했을 때, 에러가 있다면
+		if (bindingResult.hasErrors()) {
+			System.out.println(bindingResult.getAllErrors()); // Spring Validator 가 검사를 해서 발생한 에러를 모두 보여준다.
+			// 브라우저에 "board/write" 페이지를 보여주도록 하고
+			// 해당 페이지에 사용자가 입력한 값을 전달한다
+			model.addAttribute("inputData", writeVO);
+			return "board/write";
+		
+		}
+		
+		
 		// create, update, delete --> 성공 /실패 여부 반환
 		boolean createResult = this.boardService.createNewBoard(writeVO);
+		System.out.println("등록 성공 ? " + createResult);
 		
-		System.out.println("게시글 생성 성공? " + createResult);
 		// redirect: 브라우저에게 다음 End Point를 요청하도록 지시
 		// redirect:/ --> 브라우저에게 "/" endpoint로 이동하도록 지시
 		
@@ -87,18 +103,16 @@ public class BoardController {
 	// 게시글 내용 삭제
 	// endpoint -> /
 	@GetMapping("/delete") // local.... 
-	public String viewDeletePage(@RequestParam String articleId, Model model) {
+	public String doDeleteAction(@RequestParam String id, Model model) {
 		
-//		System.out.println(id); // BO-20260327-000001 출력
 		
-		this.boardService.deleteBoardByArticleId(articleId);
-	
-		return "/";
+		boolean deleteResult = this.boardService.deleteBoardByArticleId(id);
+		System.out.println("삭제 결과? " + deleteResult);
+		return "redirect:/";
 	}
 	
 	@GetMapping("/update/{articleId}")
-	public String viewUpdatePage(Model model, @PathVariable String articleId) {
-		
+	public String viewUpdatePage(@PathVariable String articleId, Model model) {
 		BoardVO data = this.boardService.findBoardByArticleId(articleId, ReadType.UPDATE);
 		
 		model.addAttribute("article", data);
@@ -111,7 +125,7 @@ public class BoardController {
 		
 		updateVO.setId(articleId);
 		boolean updateResult = this.boardService.updateBoardByArticleId(updateVO);
-		System.out.println("수정 성공? " + updateResult);
+		System.out.println("업데이트 성공? " + updateResult);
 		
 		return "redirect:/view/" + articleId;
 	}

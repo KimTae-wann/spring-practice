@@ -17,6 +17,10 @@ public class WriteVO {
 	@Pattern(regexp="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$",
 			message="비밀번호는 영소문자, 영대문자, 숫자, 최소 1개를 포함하여 8글자 이상으로 입력하세요.")
 	private String password;
+//	private String confirmPassword;
+	
+	
+	private String salt;
 	
 	public String getEmail() {
 		return this.email;
@@ -40,5 +44,21 @@ public class WriteVO {
 	
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+//	public String getConfirmPassword() {
+//		return this.confirmPassword;
+//	}
+//
+//	public void setConfirmPassword(String confirmPassword) {
+//		this.confirmPassword = confirmPassword;
+//	}
+
+	public String getSalt() {
+		return this.salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
 	}
 }

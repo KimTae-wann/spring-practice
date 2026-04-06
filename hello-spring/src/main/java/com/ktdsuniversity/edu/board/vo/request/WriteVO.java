@@ -29,6 +29,8 @@ public class WriteVO {
 	
 	private List<MultipartFile> attachFile; // 업로드한 파일은 항상 MultipartFile로 가져온다
 
+	private String FileGroupId;
+	
 	
 	public String getId() {
 		return this.id;
@@ -68,5 +70,13 @@ public class WriteVO {
 
 	public void setAttachFile(List<MultipartFile> attachFile) {
 		this.attachFile = attachFile;
+	}
+
+	public String getFileGroupId() {
+		return this.FileGroupId;
+	}
+
+	public void setFileGroupId(String fileGroupId) {
+		FileGroupId = fileGroupId;
 	}
 }

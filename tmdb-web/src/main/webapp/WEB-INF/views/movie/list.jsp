@@ -15,7 +15,7 @@
 
     <c:forEach items="${searchResult}" var="movie">
         <div class="moviesInfo">
-            <div class="poster"><img src="${movie.posterUrl }"<%-- "/image/${movie.posterUrl}.webp" --%>/> </div>
+            <div class="poster"><img src="/file/${movie.movieId}"<%-- "/image/${movie.posterUrl}.webp" --%>/> </div>
             <div class="movieInfo">
 	            <div class="movieItem"><strong>영화 ID:</strong> ${movie.movieId}</div>
 	            <div class="movieItem"><strong>제목:</strong> ${movie.title}</div>

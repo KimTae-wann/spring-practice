@@ -16,4 +16,5 @@ public interface MembersService {
 
 	SearchResultVO findAllMembers();
 
+
 }

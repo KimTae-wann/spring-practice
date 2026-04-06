@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: tmdb-web
+
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:XE
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    username: TMDB
+    password: TMDB
+
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:com/ktdsuniversity/edu/**/dao/mapper/*Mapper.xml

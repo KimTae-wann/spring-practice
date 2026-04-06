@@ -4,7 +4,7 @@
 
 <mapper namespace="com.taewan.hm.files.dao.FilesDao">
     <insert id="insertPosterImageFile"
-            parameterType="com.taewan.hm.files.vo.request.UploadPosterVO">
+            parameterType="com.taewan.hm.files.vo.request.PosterVO">
             INSERT INTO FILES
              (FILE_NUM
             , FILE_GROUP_ID
@@ -14,7 +14,9 @@
             , FILE_LENGTH
             , FILE_PATH)
             VALUES
-            ( #{fileNum}
+            ( (SELECT NVL(MAX(FILE_NUM), 0) + 1
+                 FROM FILES
+                WHERE FILE_GROUP_ID = #{fileGroupId})
             , #{fileGroupId}
             , #{obfuscateName}
             , #{displayName}
@@ -22,4 +24,15 @@
             , #{fileLength}
             , #{filePath})
     </insert>
+    
+    <select id="selectPosterImgByMovieId"
+             parameterType="string"
+             resultType="com.taewan.hm.files.vo.response.LoadPosterVO">
+             SELECT DISPLAY_NAME
+                  , EXTEND_NAME
+                  , FILE_LENGTH
+                  , FILE_PATH
+               FROM FILES
+              WHERE FILE_GROUP_ID = #{_parameter}
+    </select>
 </mapper>

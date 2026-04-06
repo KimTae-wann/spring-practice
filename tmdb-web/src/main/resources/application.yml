@@ -1,6 +1,6 @@
 mybatis:
   config-location: classpath:mybatis-config.xml
-  mapper-locations: classpath:com/taewan/hm/movie/**/mapper/*Mapper.xml
+  mapper-locations: classpath:com/taewan/hm/**/mapper/*Mapper.xml
   
 spring:
   datasource:
@@ -16,8 +16,8 @@ spring:
       prefix: /WEB-INF/views/
       suffix: .jsp
       
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 50MB
-      max-request-size: 50MB
+#  servlet:
+#    multipart:
+#      enabled: true
+#      max-file-size: 50MB
+#      max-request-size: 50MB

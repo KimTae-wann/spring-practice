@@ -1,7 +1,7 @@
 package com.taewan.hm.files.vo.request;
 
 
-public class UploadPosterVO {
+public class PosterVO {
 
 	private int fileNum;
 	private String fileGroupId;

@@ -1,0 +1,88 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ktdsuniversity.edu.movie.dao.MovieDao">
+
+	<select id="selectAllMovie" resultType="com.ktdsuniversity.edu.movie.vo.response.MovieListVO">
+		SELECT MOVIE_ID
+			 , POSTER_URL
+			 , TITLE
+			 , MOVIE_RATING
+			 , TO_CHAR(OPEN_DATE, 'YYYY') AS openYear
+			 , TO_CHAR(OPEN_DATE, 'MM"월 "DD') AS openDate
+		  FROM MOVIE
+	</select>
+
+	<!-- <resultMap type="com.ktdsuniversity.edu.movie.vo.response.OneMovieVO"
+			   id="OneMovieVOMap"
+			   autoMapping="true">
+		<id column="MOVIE_ID" property="movieId"/>
+		<association javaType="com.ktdsuniversity.edu.file.vo.FileVO" 
+					 property="fileVO"
+					 autoMapping="true">
+			<id column="FILE_NUM" property="fileNum"/>
+			<id column="FILE_GROUP_ID" property="fileGroupId"/>
+		</association>
+	</resultMap> -->
+
+	<select id="selectMovieById"
+			parameterType="string"
+			resultType="com.ktdsuniversity.edu.movie.vo.response.OneMovieVO">
+		SELECT MOVIE_ID
+			 , POSTER_URL
+			 , TITLE
+			 , MOVIE_RATING
+			 , TO_CHAR(OPEN_DATE, 'YYYY') AS openYear
+			 , TO_CHAR(OPEN_DATE, 'YYYY/MM/DD') AS openDate
+			 , OPEN_COUNTRY
+			 , RUNNING_TIME
+			 , INTRODUCE
+			 , SYNOPSIS
+			 , ORIGINAL_TITLE
+			 , STATE
+			 , LANGUAGE
+			 , BUDGET
+			 , PROFIT
+		  FROM MOVIE 
+		 WHERE MOVIE_ID = #{_parameter}
+	</select>
+
+	<insert id="insertMovie" parameterType="com.ktdsuniversity.edu.movie.vo.request.InsertVO">
+		<selectKey order="BEFORE"
+				   resultType="string"
+				   keyProperty="movieId">
+			SELECT 'MV-' || TO_CHAR(SYSDATE, 'YYYYMMDD-') || LPAD(SEQ_MOVIE_PK.NEXTVAL, 6, '0')
+			  FROM DUAL
+		</selectKey>
+		INSERT INTO MOVIE
+		 (MOVIE_ID
+		, POSTER_URL
+		, TITLE
+		, MOVIE_RATING
+		, OPEN_DATE
+		, OPEN_COUNTRY
+		, RUNNING_TIME
+		, INTRODUCE
+		, SYNOPSIS
+		, ORIGINAL_TITLE
+		, STATE
+		, LANGUAGE
+		, BUDGET
+		, PROFIT) VALUES
+		 (#{movieId}
+		, #{title} || 'URL'
+		, #{title}
+		, #{movieRating}
+		, TO_DATE(#{openDate}, 'YYYY-MM-DD hh:mi:ss')
+		, #{openCountry}
+		, #{runningTime}
+		, #{introduce}
+		, #{synopsis}
+		, #{originalTitle}
+		, #{state}
+		, #{language}
+		, #{budget}
+		, #{profit})
+	</insert>
+
+</mapper>

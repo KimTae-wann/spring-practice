@@ -53,12 +53,24 @@ pageEncoding="UTF-8"%>
 	          id="password"
 	          name="password"
 	          placeholder="비밀번호를 입력하세요."
-	          value="${inputData.password }"
+<%-- 	          value="${inputData.password }" --%>
 	        />
 	        <form:errors path="password"
 	                     cssClass="validation-error"
 	                     element="div"/>
         </div>
+        
+        <%-- 비밀번호 두 번 입력하기 ==> 두 비밀번호가 일치할 때만 회원가입 시키기 --%>
+        <label for="confirm-password">비밀번호 확인</label>
+        <div class="input-div">
+            <input type="password" id="confirm-password" name="confirm-password"/>
+            <%-- 여기서 name을 준 이유는 서버로 이 값을 보내서 로그인할 때 --%>
+        </div>
+        
+        <%-- 비밀번호 한 번 입력하기 ==> 비밀번호를 확인하는 기능 --%>
+        <label for="show-password">비밀번호 확인하기</label>
+        <input type="checkbox" id="show-password" /> <%-- name이 없다는 것은 서버로 전송하지 않겠다는 얘기지요 --%>
+
 
         <div class="btn-group">
           <div class="right-align">

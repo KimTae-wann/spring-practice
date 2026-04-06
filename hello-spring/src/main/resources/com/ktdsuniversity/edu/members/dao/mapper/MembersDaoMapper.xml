@@ -7,11 +7,19 @@
         INSERT INTO MEMBERS
 	   (EMAIL
 	  , NAME
-	  , PASSWORD)
+	  , PASSWORD
+	  , SALT
+	  , REGIST_DATE
+	  , LATEST_PASSWORD_CHANGE_DATE
+	  , LOGIN_FAIL_COUNT)
 	  VALUES
 	   (#{email}
 	  , #{name}
-	  , #{password})
+	  , #{password}
+	  , #{salt}
+	  , SYSDATE
+	  , SYSDATE
+	  , 0)
 	</insert>
 	
 	<select id="selectMemberByUserEmail" resultType="com.ktdsuniversity.edu.members.vo.MembersVO">

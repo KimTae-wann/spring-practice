@@ -11,6 +11,19 @@ body {
   margin-left: 10%;
 }
 
+div.validation-error {
+    color: #f00;
+    font-weight: 600;
+    font-size:0.85rem;
+    margin-top: 0.3rem;
+    padding: 0.425rem;
+    background-color: #f004;
+}
+
+div.input-div {
+	width: 30%;
+}
+
 /* grid style 시작 */
 div.grid{
   display: grid;

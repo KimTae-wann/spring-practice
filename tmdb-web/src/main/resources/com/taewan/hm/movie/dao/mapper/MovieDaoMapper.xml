@@ -53,10 +53,10 @@
                   , PROFIT
                   ) VALUES
                    (#{movieId}
-                  , #{posterUrl , jdbcType=VARCHAR}
+                  , #{title} || 'URL'
                   , #{title}
                   , #{movieRating}
-                  , SYSDATE
+                  , TO_DATE(#{openDate}, 'YYYY-MM-DD hh:mi:ss')
                   , #{openCountry}
                   , #{runningTime}
                   , #{introduce}

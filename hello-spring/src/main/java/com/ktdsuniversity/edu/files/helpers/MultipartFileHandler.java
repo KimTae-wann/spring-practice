@@ -18,9 +18,10 @@ public class MultipartFileHandler {
 	@Autowired
 	private FilesDao filesDao;
 	
-	public void upload(List<MultipartFile> attachFiles,
-						String fileGroupId) {
+	// 이미 존재하는 fileGroupId로 insert 또는 새로 발급 받은 fileGroupId로 insert
+	public String upload(List<MultipartFile> attachFiles, String fileGroupId) {
 		if (attachFiles != null && attachFiles.size() > 0) {
+			
 			for (int i = 0; i < attachFiles.size(); i++) {
 				// 업로드를 하지 않았는데 했다고 판단한 경우에는 다음 반복으로 넘어가라
 				if (attachFiles.get(i).isEmpty()) {
@@ -52,7 +53,26 @@ public class MultipartFileHandler {
 					e.printStackTrace();
 				}
 			}
+			return fileGroupId; // 파일이 있으면
 		}
+		return null; // 파일이 없으면
+	}
+	
+	/**
+	 * @param attachFiles
+	 * @return 첨부파일의 그룹 아이디
+	 */
+	public String upload(List<MultipartFile> attachFiles) {
+		if (attachFiles != null && attachFiles.size() > 0) {
+				
+			String fileGroupId = this.filesDao.selectNewFileGroupId();
+			this.filesDao.insertFileGroupId(fileGroupId);
+			
+			this.upload(attachFiles, fileGroupId);
+			
+			return fileGroupId; // 파일이 있으면
+		}
+		return null; // 파일이 없으면
 	}
 	
 	

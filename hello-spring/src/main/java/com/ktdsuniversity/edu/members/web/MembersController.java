@@ -16,9 +16,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ktdsuniversity.edu.members.service.MembersService;
 import com.ktdsuniversity.edu.members.vo.MembersVO;
 import com.ktdsuniversity.edu.members.vo.SearchResultVO;
+import com.ktdsuniversity.edu.members.vo.request.LoginVO;
 import com.ktdsuniversity.edu.members.vo.request.WriteVO;
 import com.ktdsuniversity.edu.members.vo.response.DuplicateResultVO;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 /**
@@ -120,6 +123,12 @@ public class MembersController {
 		return "redirect:/";
 	}
 	
+	@GetMapping("/logout")
+	public String doLogout(HttpServletRequest request) {
+		request.getSession().invalidate();
+		return "redirect:/login";
+	}
+	
 	// /member --> 회원들의 목록이 조회되도록 코드를 작성
 	//			--> 회원 목록 조회
 	//			--> members/list.jsp : 회원 목록 반복.
@@ -138,5 +147,42 @@ public class MembersController {
 		model.addAttribute("searchCount", searchCount);
 		
 		return "members/list";
+	}
+	
+	@GetMapping("/login")
+	public String viewLoginPage(HttpServletRequest request) {
+		if (request.getSession().getAttribute("__LOGIN_DATA__") != null) {
+			return "redirect:/";
+		}
+		return "members/login";
+	}
+	
+	@PostMapping("/login")
+	public String doLoginAction(@Valid @ModelAttribute LoginVO loginVO,
+								BindingResult bindingResult,
+								Model model,
+								HttpServletRequest request) {
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("loginData", loginVO);
+			return "members/login";
+		}
+		
+		String userIp = request.getRemoteAddr();
+		loginVO.setIp(userIp);
+		
+		MembersVO member = this.membersService.findMemberByEmailAndPassword(loginVO);
+		
+		// Server의 Session을 삭제한다.
+		// 로그아웃
+		request.getSession().invalidate();
+		
+		// request.getSession(); ==> HttpRequestHeader로 전달된 JSESSION의 객체를 반환
+		// request.getSession(true); ==> 기존 JSESSIONID로 발급된 세션객체는 버리고, 새로운 ID의 세션객체를 생성 후 반환.
+		// --> 이러면 게시글 작성에서 이메일을 안 적어줘도 된다. 서버에서 세션을 전달해 주기 때문이다.
+		HttpSession session = request.getSession(true); 
+		session.setAttribute("__LOGIN_DATA__", member);
+		session.setMaxInactiveInterval(10); // parameter ==> seconds
+		
+		return "redirect:/";
 	}
 }

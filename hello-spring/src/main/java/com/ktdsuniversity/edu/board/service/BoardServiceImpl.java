@@ -54,6 +54,12 @@ public class BoardServiceImpl implements BoardService{
 
 	@Override
 	public boolean createNewBoard(WriteVO writeVO) {
+
+		// 첨부 파일 업로드
+		List<MultipartFile> attachFiles = writeVO.getAttachFile();
+		String fileGroupId = this.multipartFileHandler.upload(attachFiles);
+		writeVO.setFileGroupId(fileGroupId);
+		
 		// dao -> insert 요청
 		// mybatis 는 insert, update, delete를 수행했을 때
 		// 영향을 받은 row의 수를 반환 시킨다.
@@ -62,9 +68,6 @@ public class BoardServiceImpl implements BoardService{
 		//    delete -> delete 된 row의 개수 반환
 		int insertCount = this.boardDao.insertNewBoard(writeVO);
 
-		// 첨부 파일 업로드
-		List<MultipartFile> attachFiles = writeVO.getAttachFile();
-		this.multipartFileHandler.upload(attachFiles, writeVO.getId());
 		
 		return insertCount == 1;
 	}
@@ -104,15 +107,12 @@ public class BoardServiceImpl implements BoardService{
 
 	@Override
 	public boolean updateBoardByArticleId(UpdateVO updateVO) {
-		int updateCount = this.boardDao.updateBoardById(updateVO);
-		
 		// 선택한 파일들만 삭제
 		if (updateVO.getDeleteFileNum() != null && updateVO.getDeleteFileNum().size() > 0) {
 			// 선택한 파일들의 정보를 조회 --> 파일의 경로 --> 실제 파일을 제거
 			List<String> deleteTargets = this.filesDao.selectFilesByFileGroupFileNums(updateVO);
 			
 			// 선택한 파일들을 FILES 테이블에서 제거
-			// 힘내요 태완님 할 수 있어요
 			for (String target: deleteTargets) {
 				new File(target).delete();
 			}
@@ -123,9 +123,15 @@ public class BoardServiceImpl implements BoardService{
 		System.out.println("updateVO.getAttachFile: " + updateVO.getAttachFile());
 		
 		List<MultipartFile> attachFiles = updateVO.getAttachFile();
-		this.multipartFileHandler.upload(attachFiles, updateVO.getId());
-
-		
+		String fileGroupId = updateVO.getFileGroupId();
+		// 수정하려는 게시글에 첨부파일이 없을 때
+		if (fileGroupId == null || fileGroupId.length() == 0) {
+			fileGroupId = this.multipartFileHandler.upload(attachFiles);
+			updateVO.setFileGroupId(fileGroupId);
+		} else {
+			this.multipartFileHandler.upload(attachFiles, updateVO.getFileGroupId());
+		}
+		int updateCount = this.boardDao.updateBoardById(updateVO);
 		return updateCount == 1;
 	}
 }

@@ -15,6 +15,8 @@ public class BoardVO {
 	private String mdfyDt;
 	private String fileName;
 	private String originFileName;
+	private String fileGroupId;
+	
 	private List<FilesVO> files;
 	
 	public String getId() {
@@ -86,6 +88,14 @@ public class BoardVO {
 	
 	public void setOriginFileName(String originFileName) {
 		this.originFileName = originFileName;
+	}
+	
+	public String getFileGroupId() {
+		return this.fileGroupId;
+	}
+	
+	public void setFileGroupId(String fileGroupId) {
+		this.fileGroupId = fileGroupId;
 	}
 	
 	public List<FilesVO> getFiles() {

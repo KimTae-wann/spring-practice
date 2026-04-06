@@ -75,7 +75,7 @@ $().ready(function () {
         // $(this).submit(); ==> jquery Event
         // (preventDefault)에서 전송 이벤트가 사라진 이유 때문에 동작되지 않는다.
         
-        $(this).submit(); // ==> javascript Event
+        this.submit(); // ==> javascript Event
       }
     });
 });

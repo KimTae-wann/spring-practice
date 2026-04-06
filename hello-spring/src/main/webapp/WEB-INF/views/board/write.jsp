@@ -34,36 +34,24 @@ pageEncoding="UTF-8"%>
 		                     cssClass="validation-error" 
 		                     element="div"/>
 	        </div>
-        
 
-		    <label for="email">이메일</label>
-	        <div class="input-div">
-		        <input
-		          type="email"
-		          id="email"
-		          name="email"
-		          placeholder="이메일을 입력하세요."
-		          value="${inputData.email }"
-		        />
-		        <form:errors path="email" 
-		                     cssClass="validation-error" 
-		                     element="div"/>
+
+
+	        <label for="attach-files">첨부파일</label>
+	        <div id="attach-files" class="attach-files">
+	          <input type="file" name="attachFile" />
+	          <button type="button" class="add-file">+</button>
 	        </div>
-        <label for="attach-files">첨부파일</label>
-        <div id="attach-files" class="attach-files">
-          <input type="file" name="attachFile" />
-          <button type="button" class="add-file">+</button>
-        </div>
-
-        <label for="content">내용</label>
-        <textarea id="content" name="content" placeholder="내용을 입력하세요.">${inputData.content }
-        </textarea>
-
-        <div class="btn-group">
-          <div class="right-align">
-            <input type="submit" value="저장" />
-          </div>
-        </div>
+	
+	        <label for="content">내용</label>
+	        <textarea id="content" name="content" placeholder="내용을 입력하세요.">${inputData.content }
+	        </textarea>
+	
+	        <div class="btn-group">
+	          <div class="right-align">
+	            <input type="submit" value="저장" />
+	          </div>
+	        </div>
       </div>
     </form:form>
   </body>

@@ -21,4 +21,8 @@ public interface FilesDao {
 	int deleteFilesByFileGroupIdAndFileNums(UpdateVO updateVO);
 
 	List<String> selectFilePathByFileGroupId(String id);
+
+	String selectNewFileGroupId();
+
+	void insertFileGroupId(String fileGroupId);
 }

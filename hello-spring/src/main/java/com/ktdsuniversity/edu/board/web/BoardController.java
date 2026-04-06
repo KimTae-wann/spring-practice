@@ -18,7 +18,10 @@ import com.ktdsuniversity.edu.board.vo.BoardVO;
 import com.ktdsuniversity.edu.board.vo.SearchResultVO;
 import com.ktdsuniversity.edu.board.vo.request.UpdateVO;
 import com.ktdsuniversity.edu.board.vo.request.WriteVO;
+import com.ktdsuniversity.edu.members.vo.MembersVO;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller // EndPoint 생성
@@ -48,16 +51,34 @@ public class BoardController {
 	
 	// 게시글 등록 화면 보여주는 EndPoint
 	@GetMapping("/write")
-	public String viewWritePage() {
+	public String viewWritePage(HttpServletRequest request) {
+		// 1. 로그인을 안한 상태에서 글쓰기 페이지로 접근하면 "/list"로 이동 하도록 한다.
+		HttpSession session = request.getSession();
+		if (session.getAttribute("__LOGIN_DATA__") == null) {
+			return "redirect:/";
+		}
 		return "board/write";
 	}
+
 	
+	// request.getSession(); ==> HttpRequestHeader로 전달된 JSESSION의 객체를 반환
+	// request.getSession(true); ==> 기존 JSESSIONID로 발급된 세션객체는 버리고, 새로운 ID의 세션객체를 생성 후 반환.
+	// --> 이러면 게시글 작성에서 이메일을 안 적어줘도 된다. 서버에서 세션을 전달해 주기 때문이다.
 	@PostMapping("/write")
 	public String doWriteAction(@Valid @ModelAttribute WriteVO writeVO
 								// @Valid의 결과를 받아오는 파라미터
 								// 반드시 동일하게 써줘야 한다.
 								, BindingResult bindingResult
-								, Model model) {
+								, Model model
+								, HttpServletRequest request) {
+		
+		// 2. 글 쓰기 페이지에서 30분동안 아무것도 안한 이후 "등록" 버튼을 누르면 "/login"으로 이동 하도록 한다.
+		// 세션은 이벤트(엔드포인트 요청)가 발생하면 항상 Default인 30분으로 초기화 된다.
+		HttpSession session = request.getSession();
+		if (session.getAttribute("__LOGIN_DATA__") == null) {
+			return "redirect:/login";
+		}
+		
 		// 사용자의 입력값을 검증 했을 때, 에러가 있다면
 		if (bindingResult.hasErrors()) {
 			System.out.println(bindingResult.getAllErrors()); // Spring Validator 가 검사를 해서 발생한 에러를 모두 보여준다.
@@ -68,6 +89,10 @@ public class BoardController {
 		
 		}
 		
+		// 로그인 데이터(__LOGIN_DATA__)에서 로그인 한 사용자의 이메일을 가져온다 ==> MembersController
+		// 반환값이 Object이기 때문에 캐스팅을 해준다.
+		MembersVO loginMember = (MembersVO)session.getAttribute("__LOGIN_DATA__");
+		writeVO.setEmail(loginMember.getEmail());
 		
 		// create, update, delete --> 성공 /실패 여부 반환
 		boolean createResult = this.boardService.createNewBoard(writeVO);

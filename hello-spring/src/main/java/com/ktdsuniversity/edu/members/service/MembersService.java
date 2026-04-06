@@ -1,6 +1,8 @@
 package com.ktdsuniversity.edu.members.service;
 
+import com.ktdsuniversity.edu.members.vo.request.LoginVO;
 import com.ktdsuniversity.edu.members.vo.request.WriteVO;
+
 import com.ktdsuniversity.edu.members.vo.MembersVO;
 import com.ktdsuniversity.edu.members.vo.SearchResultVO;
 
@@ -16,5 +18,6 @@ public interface MembersService {
 
 	SearchResultVO findAllMembers();
 
+	MembersVO findMemberByEmailAndPassword(LoginVO loginVO);
 
 }

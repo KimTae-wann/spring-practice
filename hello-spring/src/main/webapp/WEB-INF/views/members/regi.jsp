@@ -17,7 +17,7 @@ pageEncoding="UTF-8"%>
                method="post" 
                action="/regist"
                enctype="multipart/form-data">
-      <div class="grid write">
+      <div class="grid regist">
         <label for="email">이메일</label>
         <div class="input-div">
         <input

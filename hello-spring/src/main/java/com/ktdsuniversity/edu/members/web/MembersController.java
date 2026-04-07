@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.ktdsuniversity.edu.members.service.MembersService;
 import com.ktdsuniversity.edu.members.vo.MembersVO;
@@ -77,7 +78,7 @@ public class MembersController {
 		
 		System.out.println("회원 생성 성공? " + createMember);
 		
-		return "redirect:/regist";
+		return "redirect:/";
 	}
 	
 	/*
@@ -124,9 +125,24 @@ public class MembersController {
 	}
 	
 	@GetMapping("/logout")
-	public String doLogout(HttpServletRequest request) {
-		request.getSession().invalidate();
+	public String doLogout(HttpSession session) {
+		session.invalidate();
 		return "redirect:/login";
+	}
+	
+	@GetMapping("/delete-me")
+	public String doDeleteAction(@SessionAttribute(name="__LOGIN_DATA__", required = false)
+								MembersVO loginMember
+								, HttpSession session){
+		// 1. 로그인 세션에서 회원의 이메일을 가져온다.
+		// 2. MEMBERS 테이블에서 회원의 정보를 이메일을 이용해 삭제한다.
+		this.membersService.deleteMemberByUserEmail(loginMember.getEmail());
+		// 3. 현재 로그인된 사용자를 로그아웃 시킨다. 
+		session.invalidate(); // 이건 서버의 세션을 갈아버리는거 아닌가?
+		// 4. "members/deletesuccess" 페이지를 보여준다.
+		//	  "탈퇴가 완료됐습니다. 다음에 다시 만나요!" 를 보여줌
+		
+		return "members/deleteSuccess";
 	}
 	
 	// /member --> 회원들의 목록이 조회되도록 코드를 작성
@@ -150,8 +166,8 @@ public class MembersController {
 	}
 	
 	@GetMapping("/login")
-	public String viewLoginPage(HttpServletRequest request) {
-		if (request.getSession().getAttribute("__LOGIN_DATA__") != null) {
+	public String viewLoginPage(HttpSession session) {
+		if (session.getAttribute("__LOGIN_DATA__") != null) {
 			return "redirect:/";
 		}
 		return "members/login";
@@ -179,9 +195,9 @@ public class MembersController {
 		// request.getSession(); ==> HttpRequestHeader로 전달된 JSESSION의 객체를 반환
 		// request.getSession(true); ==> 기존 JSESSIONID로 발급된 세션객체는 버리고, 새로운 ID의 세션객체를 생성 후 반환.
 		// --> 이러면 게시글 작성에서 이메일을 안 적어줘도 된다. 서버에서 세션을 전달해 주기 때문이다.
-		HttpSession session = request.getSession(true); 
+		HttpSession session = request.getSession(true);
 		session.setAttribute("__LOGIN_DATA__", member);
-		session.setMaxInactiveInterval(10); // parameter ==> seconds
+		//session.setMaxInactiveInterval(10); // parameter ==> seconds
 		
 		return "redirect:/";
 	}

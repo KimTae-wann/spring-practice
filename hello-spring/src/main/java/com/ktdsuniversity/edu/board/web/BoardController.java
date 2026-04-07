@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.ktdsuniversity.edu.board.enums.ReadType;
 import com.ktdsuniversity.edu.board.service.BoardService;
@@ -20,8 +21,6 @@ import com.ktdsuniversity.edu.board.vo.request.UpdateVO;
 import com.ktdsuniversity.edu.board.vo.request.WriteVO;
 import com.ktdsuniversity.edu.members.vo.MembersVO;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller // EndPoint 생성
@@ -51,12 +50,13 @@ public class BoardController {
 	
 	// 게시글 등록 화면 보여주는 EndPoint
 	@GetMapping("/write")
-	public String viewWritePage(HttpServletRequest request) {
+	public String viewWritePage(@SessionAttribute(name="__LOGIN_DATA__", required = false) 
+								MembersVO loginMember) {
 		// 1. 로그인을 안한 상태에서 글쓰기 페이지로 접근하면 "/list"로 이동 하도록 한다.
-		HttpSession session = request.getSession();
-		if (session.getAttribute("__LOGIN_DATA__") == null) {
+		if (loginMember == null) {
 			return "redirect:/";
 		}
+		//session.setMaxInactiveInterval(10); // parameter ==> seconds
 		return "board/write";
 	}
 
@@ -70,12 +70,12 @@ public class BoardController {
 								// 반드시 동일하게 써줘야 한다.
 								, BindingResult bindingResult
 								, Model model
-								, HttpServletRequest request) {
+								, @SessionAttribute(name="__LOGIN_DATE__", required = false)
+								MembersVO loginMember) {
 		
 		// 2. 글 쓰기 페이지에서 30분동안 아무것도 안한 이후 "등록" 버튼을 누르면 "/login"으로 이동 하도록 한다.
 		// 세션은 이벤트(엔드포인트 요청)가 발생하면 항상 Default인 30분으로 초기화 된다.
-		HttpSession session = request.getSession();
-		if (session.getAttribute("__LOGIN_DATA__") == null) {
+		if (loginMember == null) {
 			return "redirect:/login";
 		}
 		
@@ -91,7 +91,6 @@ public class BoardController {
 		
 		// 로그인 데이터(__LOGIN_DATA__)에서 로그인 한 사용자의 이메일을 가져온다 ==> MembersController
 		// 반환값이 Object이기 때문에 캐스팅을 해준다.
-		MembersVO loginMember = (MembersVO)session.getAttribute("__LOGIN_DATA__");
 		writeVO.setEmail(loginMember.getEmail());
 		
 		// create, update, delete --> 성공 /실패 여부 반환
@@ -137,8 +136,16 @@ public class BoardController {
 	}
 	
 	@GetMapping("/update/{articleId}")
-	public String viewUpdatePage(@PathVariable String articleId, Model model) {
+	public String viewUpdatePage(@PathVariable String articleId
+								, Model model
+								, @SessionAttribute(name="__LOGIN_DATE__", required = false)
+								MembersVO loginMember) {
 		BoardVO data = this.boardService.findBoardByArticleId(articleId, ReadType.UPDATE);
+		
+		
+		if (!loginMember.getEmail().equals(data.getEmail())) {
+			return "redirect:/login";
+		}
 		
 		model.addAttribute("article", data);
 		
@@ -146,8 +153,15 @@ public class BoardController {
 	}
 	
 	@PostMapping("/update/{articleId}")
-	public String doUpdateAction(UpdateVO updateVO, @PathVariable String articleId) {
-		
+	public String doUpdateAction(UpdateVO updateVO
+								, @PathVariable String articleId
+								, @SessionAttribute(name="__LOGIN_DATE__", required = false)
+								MembersVO loginMember) {
+		if (loginMember == null) {
+			return "redirect:/login";
+		}
+
+		updateVO.setEmail(loginMember.getEmail());
 		updateVO.setId(articleId);
 		boolean updateResult = this.boardService.updateBoardByArticleId(updateVO);
 		System.out.println("업데이트 성공? " + updateResult);

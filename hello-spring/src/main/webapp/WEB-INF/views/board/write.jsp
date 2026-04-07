@@ -1,16 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Insert title here</title>
-    <link rel="stylesheet" type="text/css" href="/css/hello-spring.css" />
-    <script type="text/javascript" src="/js/jquery-4.0.0.slim.min.js"></script>
-    <script type="text/javascript" src="/js/board.js"></script>
-  </head>
-  <body>
+<jsp:include page="/WEB-INF/views/templates/header.jsp">
+    <jsp:param value="게시글 작성" name="title"/>
+    <jsp:param value="<script type='text/javascript' src='/js/board.js'></script>" name="scripts"/>
+</jsp:include>
     <h1>게시글 작성</h1>
     <!-- action -> form 내부의 value를 전송할 EndPoint -->
     <!--  form:form modelAttribute -> form 태그 내부의 input, textarea, select 등을
@@ -44,8 +38,7 @@ pageEncoding="UTF-8"%>
 	        </div>
 	
 	        <label for="content">내용</label>
-	        <textarea id="content" name="content" placeholder="내용을 입력하세요.">${inputData.content }
-	        </textarea>
+	        <textarea id="content" name="content" placeholder="내용을 입력하세요.">${inputData.content}</textarea>
 	
 	        <div class="btn-group">
 	          <div class="right-align">

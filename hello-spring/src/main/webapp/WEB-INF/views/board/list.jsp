@@ -27,7 +27,7 @@ pageEncoding="UTF-8"%>
         <tr>
           <th>번호</th>
           <th>제목</th>
-          <th>이메일</th>
+          <th>이름</th>
           <th>조회수</th>
           <th>등록일</th>
           <th>수정일</th>
@@ -42,7 +42,7 @@ pageEncoding="UTF-8"%>
                 <td>
                   <a href="/view/${board.id}">${board.subject}</a>
                 </td>
-                <td>${board.email}</td>
+                <td>${board.membersVO.name}</td>
                 <td>${board.viewCnt}</td>
                 <td>${board.crtDt}</td>
                 <td>${board.mdfyDt}</td>

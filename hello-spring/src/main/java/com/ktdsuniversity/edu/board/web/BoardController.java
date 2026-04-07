@@ -50,13 +50,7 @@ public class BoardController {
 	
 	// 게시글 등록 화면 보여주는 EndPoint
 	@GetMapping("/write")
-	public String viewWritePage(@SessionAttribute(name="__LOGIN_DATA__", required = false) 
-								MembersVO loginMember) {
-		// 1. 로그인을 안한 상태에서 글쓰기 페이지로 접근하면 "/list"로 이동 하도록 한다.
-		if (loginMember == null) {
-			return "redirect:/";
-		}
-		//session.setMaxInactiveInterval(10); // parameter ==> seconds
+	public String viewWritePage() {
 		return "board/write";
 	}
 
@@ -70,14 +64,8 @@ public class BoardController {
 								// 반드시 동일하게 써줘야 한다.
 								, BindingResult bindingResult
 								, Model model
-								, @SessionAttribute(name="__LOGIN_DATE__", required = false)
+								, @SessionAttribute(name="__LOGIN_DATE__")
 								MembersVO loginMember) {
-		
-		// 2. 글 쓰기 페이지에서 30분동안 아무것도 안한 이후 "등록" 버튼을 누르면 "/login"으로 이동 하도록 한다.
-		// 세션은 이벤트(엔드포인트 요청)가 발생하면 항상 Default인 30분으로 초기화 된다.
-		if (loginMember == null) {
-			return "redirect:/login";
-		}
 		
 		// 사용자의 입력값을 검증 했을 때, 에러가 있다면
 		if (bindingResult.hasErrors()) {
@@ -138,7 +126,7 @@ public class BoardController {
 	@GetMapping("/update/{articleId}")
 	public String viewUpdatePage(@PathVariable String articleId
 								, Model model
-								, @SessionAttribute(name="__LOGIN_DATE__", required = false)
+								, @SessionAttribute(name="__LOGIN_DATE__")
 								MembersVO loginMember) {
 		BoardVO data = this.boardService.findBoardByArticleId(articleId, ReadType.UPDATE);
 		

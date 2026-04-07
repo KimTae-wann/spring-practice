@@ -131,7 +131,7 @@ public class MembersController {
 	}
 	
 	@GetMapping("/delete-me")
-	public String doDeleteAction(@SessionAttribute(name="__LOGIN_DATA__", required = false)
+	public String doDeleteAction(@SessionAttribute(name="__LOGIN_DATA__")
 								MembersVO loginMember
 								, HttpSession session){
 		// 1. 로그인 세션에서 회원의 이메일을 가져온다.
@@ -166,10 +166,7 @@ public class MembersController {
 	}
 	
 	@GetMapping("/login")
-	public String viewLoginPage(HttpSession session) {
-		if (session.getAttribute("__LOGIN_DATA__") != null) {
-			return "redirect:/";
-		}
+	public String viewLoginPage() {
 		return "members/login";
 	}
 	

@@ -13,8 +13,8 @@ pageEncoding="UTF-8"%>
       <span>제목</span>
       <div>${article.subject}</div>
 
-      <span>이메일</span>
-      <div>${article.email}</div>
+      <span>이름</span>
+      <div>${article.membersVO.name} (가입일: ${article.membersVO.registDate})</div>
 
       <span>조회수</span>
       <div>${article.viewCnt}</div>

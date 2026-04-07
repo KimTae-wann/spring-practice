@@ -3,6 +3,7 @@ package com.ktdsuniversity.edu.board.vo;
 import java.util.List;
 
 import com.ktdsuniversity.edu.files.vo.FilesVO;
+import com.ktdsuniversity.edu.members.vo.MembersVO;
 
 public class BoardVO {
 
@@ -18,6 +19,8 @@ public class BoardVO {
 	private String fileGroupId;
 	
 	private List<FilesVO> files;
+	
+	private MembersVO membersVO;
 	
 	public String getId() {
 		return id;
@@ -104,5 +107,13 @@ public class BoardVO {
 	
 	public void setFiles(List<FilesVO> files) {
 		this.files = files;
+	}
+	
+	public MembersVO getMembersVO() {
+		return this.membersVO;
+	}
+
+	public void setMembersVO(MembersVO membersVO) {
+		this.membersVO = membersVO;
 	}
 }

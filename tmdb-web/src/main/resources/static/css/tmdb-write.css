@@ -6,32 +6,41 @@
 
 body {
   margin: 0;
-  color: #333;
   background-color: rgb(192, 200, 238);
-  margin-left: 10%;
+  max-width: 60rem;
+  margin-left: 30rem;
+}
+
+div.validation-ok {
+  color: #ff0;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  padding: 0.425rem;
+  background-color: #f004;
 }
 
 div.validation-error {
-    color: #f00;
-    font-weight: 600;
-    font-size:0.85rem;
-    margin-top: 0.3rem;
-    padding: 0.425rem;
-    background-color: #f004;
+  color: #f00;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  padding: 0.425rem;
+  background-color: #f004;
 }
 
 div.input-div {
-	width: 30%;
+  width: 20rem;
 }
 
 /* grid style 시작 */
-div.grid{
+div.grid {
   display: grid;
 }
 
-div.grid input, 
-div.grid textarea{
-    background-color: #cb9fc9;
+div.grid input,
+div.grid textarea {
+  background-color: #cb9fc9;
 }
 
 div.grid > div.btn-group {

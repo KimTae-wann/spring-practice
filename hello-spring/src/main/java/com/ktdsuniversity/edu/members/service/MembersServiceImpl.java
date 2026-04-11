@@ -4,11 +4,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ktdsuniversity.edu.members.vo.request.LoginVO;
 import com.ktdsuniversity.edu.members.vo.request.WriteVO;
+import com.ktdsuniversity.edu.exceptions.HelloSpringException;
 import com.ktdsuniversity.edu.members.dao.MembersDao;
 import com.ktdsuniversity.edu.members.helpers.SHA256Util;
 import com.ktdsuniversity.edu.members.vo.MembersVO;
@@ -17,6 +21,8 @@ import com.ktdsuniversity.edu.members.vo.SearchResultVO;
 @Service
 public class MembersServiceImpl implements MembersService{
 
+	private static final Logger logger = LoggerFactory.getLogger(MembersServiceImpl.class);
+	
 	@Autowired
 	private MembersDao membersDao;
 	
@@ -25,7 +31,8 @@ public class MembersServiceImpl implements MembersService{
 		// 확인해보고 실제로 저장할 때 진짜 있는지 확인(그 사이 누군가 만들었을수도 있잖아)
 		MembersVO membersVO = this.membersDao.selectMemberByUserEmail(writeVO.getEmail());
 		if (membersVO != null) {
-			throw new IllegalArgumentException(writeVO.getEmail() + "은 이미 사용중입니다");
+			//throw new IllegalArgumentException(writeVO.getEmail() + "은 이미 사용중입니다");
+			throw new HelloSpringException("이미 사용중인 이메일입니다", "members/regi", writeVO);
 		}
 		
 		// 암호화를 위한 비밀키 생성
@@ -47,12 +54,14 @@ public class MembersServiceImpl implements MembersService{
 		writeVO.setPassword(usersPassword);
 		
 		int insertCount = this.membersDao.insertNewMembers(writeVO);
-		System.out.println("생성된 회원의 수? " + insertCount);
+		logger.debug("생성된 회원의 수? {}", insertCount);
+		//System.out.println("생성된 회원의 수? " + insertCount);
 		if (insertCount == 1) {
-			System.out.println("성공");
+			logger.debug("성공");
+//			System.out.println("성공");
 		} else {
-			
-			System.out.println("실패");
+			logger.debug("실패");
+//			System.out.println("실패");
 			
 		}
 		return insertCount == 1;
@@ -93,6 +102,7 @@ public class MembersServiceImpl implements MembersService{
 		return result;
 	}
 	
+	@Transactional(noRollbackFor = HelloSpringException.class)
 	@Override
 	public MembersVO findMemberByEmailAndPassword(LoginVO loginVO) {
 		
@@ -101,7 +111,8 @@ public class MembersServiceImpl implements MembersService{
 		
 		// 2. 조회된 결과가 없다면 "이메일 또는 비밀번호가 잘못되었습니다." 예외 던지기
 		if (membersVO == null) {
-			throw new IllegalArgumentException("이메일 또는 비밀번호가 잘못되었습니다.");
+			//throw new IllegalArgumentException("이메일 또는 비밀번호가 잘못되었습니다.");
+			throw new HelloSpringException("이메일 또는 비밀번호가 잘못되었습니다.", "members/login", loginVO);
 		}
 		
 		if (membersVO.getBlockYn().equals("Y")) {
@@ -112,7 +123,8 @@ public class MembersServiceImpl implements MembersService{
 			LocalDateTime latestBlockDateTime = LocalDateTime.parse(latestLoginFailDate, dateTimePattern);
 			// 이 경우엔 예외를 던지지 않도록 한다.
 			if (latestBlockDateTime.isAfter(LocalDateTime.now().minusMinutes(120))) {
-				throw new IllegalArgumentException("이메일 또는 비밀번호가 잘못되었습니다.");
+				//throw new IllegalArgumentException("이메일 또는 비밀번호가 잘못되었습니다.");
+				throw new HelloSpringException("이메일 또는 비밀번호가 잘못되었습니다.", "members/login",loginVO);
 			}
 		}
 		
@@ -132,7 +144,8 @@ public class MembersServiceImpl implements MembersService{
 			// 최근 로그인 실패 횟수가 5 이상이라면 block-yn을 Y로 변경한다.
 			this.membersDao.updateBlock(loginVO.getEmail());
 			
-			throw new IllegalArgumentException("이메일 또는 비밀번호가 잘못되었습니다.");
+			//throw new IllegalArgumentException("이메일 또는 비밀번호가 잘못되었습니다.");
+			throw new HelloSpringException("이메일 또는 비밀번호가 잘못되었습니다.", "members/login", loginVO);
 		}
 		// 로그인 성공하면 비밀번호 실패 횟수 리셋
 		// 1. login_fail_count를 0으로 초기화

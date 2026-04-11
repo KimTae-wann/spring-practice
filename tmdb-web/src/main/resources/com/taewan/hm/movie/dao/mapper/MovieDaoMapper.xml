@@ -67,4 +67,11 @@
                   , #{budget}
                   , #{profit})
     </insert>
+    
+    <delete id="deleteMovieById"
+            parameterType="string">
+     DELETE
+       FROM MOVIE
+      WHERE MOVIE_ID = #{_parameter}
+    </delete>
 </mapper>

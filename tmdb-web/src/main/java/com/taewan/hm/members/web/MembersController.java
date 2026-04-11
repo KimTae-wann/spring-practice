@@ -56,6 +56,6 @@ public class MembersController {
 		
 		boolean createResult = this.memberService.createNewMember(registVO);
 		System.out.println("회원 가입 결과? " + createResult);
-		return "redirect:/regist";
+		return "redirect:/list";
 	}
 }

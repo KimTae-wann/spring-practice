@@ -19,7 +19,10 @@ pageEncoding="UTF-8"%>
             <a href="/login">로그인</a>
           </c:when>
           <c:otherwise>
-            <div>${sessionScope.__LOGIN_DATA__.name}</div>
+            <div class="member-info" data-email="${sessionScope.__LOGIN_DATA__.email}">
+              ${sessionScope.__LOGIN_DATA__.name}
+              (${sessionScope.__LOGIN_DATA__.email})
+            </div>
             <a href="/member/view/${sessionScope.__LOGIN_DATA__.email}">마이페이지</a>
             <a href="/logout">로그아웃</a>
           </c:otherwise>

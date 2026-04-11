@@ -11,4 +11,9 @@ public interface FilesDao {
 	int insertPosterImageFile(PosterVO posterVO);
 
 	LoadPosterVO selectPosterImgByMovieId(String movieId);
+
+	String selectFilePathByFileGroupId(String movieId);
+
+	boolean deleteFileByFileGroupId(String id);
+	
 }

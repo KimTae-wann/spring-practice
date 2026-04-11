@@ -17,4 +17,6 @@ public interface MovieDao {
 
 	int insertNewMovie(WriteVO writeVO);
 
+	int deleteMovieById(String id);
+
 }

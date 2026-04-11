@@ -2,8 +2,6 @@ package com.taewan.hm.movie.vo.request;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.taewan.hm.movie.vo.MovieVO;
-
 import jakarta.validation.constraints.NotBlank;
 
 public class WriteVO{

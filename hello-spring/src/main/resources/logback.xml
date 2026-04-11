@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- scan="true" ==> Logback이 실시간으로 감시할지에 대한 여부
+     scanPeriod="30 seconds" ==> 감시 주기 -->
+<configuration scan="true" scanPeriod="30 seconds" debug="true">
+  
+  <!-- 파일로 저장 -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${user.home}/hello-spring.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- daily rollover -->
+      <fileNamePattern>${user.home}/logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+    </rollingPolicy>
+
+    <encoder>
+      <pattern>%-4relative [%thread] %-5level %logger{35} -%kvp- %msg%n</pattern>
+    </encoder>
+  </appender>
+  
+  <!-- 콘솔로 찍어 -->
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are assigned the type
+         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <encoder>
+      <pattern>%d{MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line -%kvp- %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- 모든 로그를 debug 이하 수준만 출력한다. 
+       T(trace) > D(debug) > I(info) > W(warn) > E(error)-->
+  <root level="debug">
+    <appender-ref ref="FILE"/>
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>

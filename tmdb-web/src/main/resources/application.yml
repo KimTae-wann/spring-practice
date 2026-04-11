@@ -1,3 +1,7 @@
+logging:
+  level:
+    root: debug
+
 mybatis:
   config-location: classpath:mybatis-config.xml
   mapper-locations: classpath:com/taewan/hm/**/mapper/*Mapper.xml
@@ -15,9 +19,3 @@ spring:
     view:
       prefix: /WEB-INF/views/
       suffix: .jsp
-      
-#  servlet:
-#    multipart:
-#      enabled: true
-#      max-file-size: 50MB
-#      max-request-size: 50MB

@@ -82,4 +82,56 @@ $().ready(function () {
             $('#password').attr("type", "password");
         }
     });
+    
+    $('#writeVO').on('submit', function (event) {
+        // 이미 브라우저에 할당된 submit 콜백 이벤트를 제거한다.
+        event.preventDefault();
+        // form 내부에 존재하는 ".validation error" 엘리먼트를 모두 제거.
+        $(this).find('.validation-error').remove();
+        
+        $('#password').trigger('keyup'); // password의 keyup 이벤트를 발생시켜라
+
+        // 이름과 이메일과 비밀번호를 제대로 입력했다 ==> 폼을 전송
+        var email = $('#email').val();
+        if (!email) {
+          var emailErrorMessage = $('<div>');
+          emailErrorMessage.addClass('validation-error');
+          emailErrorMessage.text('이메일 형태가 아닙니다.');
+
+          $('#email').after(emailErrorMessage);
+        }
+
+        var name = $('#name').val();
+        if (!name) {
+          var nameErrorMessage = $('<div>');
+          nameErrorMessage.addClass('validation-error');
+          nameErrorMessage.text('이름을 입력해주세요');
+
+          $('#name').after(nameErrorMessage);
+        }
+
+        var passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+        var password = $('#password').val();
+        if (!passwordPattern.test(password)) {
+          var passwordErrorMessage = $('<div>');
+          passwordErrorMessage.addClass('validation-error');
+          passwordErrorMessage.text(
+           '비밀번호는 영소문자, 영대문자, 숫자, 최소 1개를 포함하여 8글자 이상으로 입력하세요.'
+          );
+          $('#password').after(passwordErrorMessage);
+        }
+        if (!password) {
+          var passwordErrorMessage = $('<div>');
+          passwordErrorMessage.addClass('validation-error');
+          passwordErrorMessage.text('비밀번호를 입력해주세요');
+          $('#password').after(passwordErrorMessage);
+        }
+        // 제대로 입력하지 않았다 ==> 에러 메세지를 화면에 보여준다 폼 전송X
+        if ($('.validation-error').length === 0) {
+          // $(this).submit(); ==> jquery Event
+          // 14번 라인(preventDefault)에서 전송 이벤트가 사라진 이유 때문에 동작되지 않는다.
+          
+          this.submit(); // ==> javascript Event
+        }
+      });
 });

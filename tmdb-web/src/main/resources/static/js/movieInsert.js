@@ -50,7 +50,8 @@ $().ready(function () {
         
         // 제대로 입력한 경우 ==> 폼 전송
         if ($('.validation-error').length === 0) {
-            $(this).submit();
+            this.submit();
         }
+        // TODO 무한루프에 빠짐
     });  
 });

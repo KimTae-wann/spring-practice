@@ -37,6 +37,8 @@ public class HelloSpringConfiguration implements WebMvcConfigurer {
 		excludePatterns.add("/"); // 게시글 목록 조회
 		excludePatterns.add("/view/**"); // 게시글 내용 조회
 		excludePatterns.add("/file/**"); // 파일 다운로드
+		excludePatterns.add("/error"); // 에러 내용이 보여지는 페이지
+		
 		
 		registry.addInterceptor(sessionInterceptor)
 				.addPathPatterns("/**") // 해당 URL을 대상으로 Session Check를 수행.

@@ -2,11 +2,16 @@ package com.ktdsuniversity.edu.board.service;
 
 import com.ktdsuniversity.edu.files.dao.FilesDao;
 import com.ktdsuniversity.edu.files.helpers.MultipartFileHandler;
+import com.ktdsuniversity.edu.files.vo.request.SearchFileGroupVO;
+
 import java.io.File;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ktdsuniversity.edu.board.dao.BoardDao;
@@ -15,9 +20,13 @@ import com.ktdsuniversity.edu.board.vo.BoardVO;
 import com.ktdsuniversity.edu.board.vo.SearchResultVO;
 import com.ktdsuniversity.edu.board.vo.request.UpdateVO;
 import com.ktdsuniversity.edu.board.vo.request.WriteVO;
+import com.ktdsuniversity.edu.exceptions.HelloSpringException;
 
 @Service // transaction 관리함
 public class BoardServiceImpl implements BoardService{
+	
+	private static final Logger logger = LoggerFactory.getLogger(BoardService.class);
+	
 	/*
 	 * Bean 컨테이너에 들어있는 객체 중 타입이 일치하는 객체를 할당 받는다. DI
 	 */
@@ -52,6 +61,7 @@ public class BoardServiceImpl implements BoardService{
 		return result;
 	}
 
+	@Transactional
 	@Override
 	public boolean createNewBoard(WriteVO writeVO) {
 
@@ -67,11 +77,12 @@ public class BoardServiceImpl implements BoardService{
 		//    update -> update 된 row의 개수 반환
 		//    delete -> delete 된 row의 개수 반환
 		int insertCount = this.boardDao.insertNewBoard(writeVO);
-
-		
+		logger.debug("생성된 게시글의 개수? {}", insertCount);
+		//System.out.println("생성된 게시글의 개수? " + insertCount);
 		return insertCount == 1;
 	}
 
+	@Transactional
 	@Override
 	public BoardVO findBoardByArticleId(String articleId, ReadType readType) {
 		if (readType == ReadType.VIEW) {
@@ -79,9 +90,10 @@ public class BoardServiceImpl implements BoardService{
 			int updateCount = this.boardDao.updateViewCntIncreaseById(articleId);
 		
 			if (updateCount == 0) {
-				return null; // 웹페이지가 멈추지 않는다.
+				// return null; // 웹페이지가 멈추지 않는다.
 				// 존재하지 않는 게시글을 조회하려 했다.
 				// throw new RuntimeException("존재하지 않는 게시글입니다.");
+				throw new HelloSpringException("존재하지 않는 게시글입니다.", "errors/404");
 			}
 		}
 		// 2. 게시글 조회
@@ -90,6 +102,7 @@ public class BoardServiceImpl implements BoardService{
 		return board;
 	}
 
+	@Transactional
 	@Override
 	public boolean deleteBoardByArticleId(String id) {
 		int deleteCount = this.boardDao.deleteBoardById(id);
@@ -105,22 +118,28 @@ public class BoardServiceImpl implements BoardService{
 		return deleteCount == 1;
 	}
 
+	@Transactional
 	@Override
 	public boolean updateBoardByArticleId(UpdateVO updateVO) {
 		// 선택한 파일들만 삭제
 		if (updateVO.getDeleteFileNum() != null && updateVO.getDeleteFileNum().size() > 0) {
 			// 선택한 파일들의 정보를 조회 --> 파일의 경로 --> 실제 파일을 제거
-			List<String> deleteTargets = this.filesDao.selectFilesByFileGroupFileNums(updateVO);
+			SearchFileGroupVO searchFileGroupVO = new SearchFileGroupVO();
+			searchFileGroupVO.setDeleteFileNum(updateVO.getDeleteFileNum());
+			searchFileGroupVO.setFileGroupId(updateVO.getFileGroupId());
+			List<String> deleteTargets = this.filesDao.selectFilesByFileGroupFileNums(searchFileGroupVO);
 			
 			// 선택한 파일들을 FILES 테이블에서 제거
 			for (String target: deleteTargets) {
 				new File(target).delete();
 			}
 			
-			int deleteCount = this.filesDao.deleteFilesByFileGroupIdAndFileNums(updateVO);
-			System.out.println("삭제한 파일 데이터의 수: " + deleteCount);
+			int deleteCount = this.filesDao.deleteFilesByFileGroupIdAndFileNums(searchFileGroupVO);
+			logger.debug("삭제한 파일 데이터의 수: {}", deleteCount);
+			//System.out.println("삭제한 파일 데이터의 수: " + deleteCount);
 		}
-		System.out.println("updateVO.getAttachFile: " + updateVO.getAttachFile());
+		logger.debug("updateVO.getAttachFile: {}", updateVO.getAttachFile());
+		//System.out.println("updateVO.getAttachFile: " + updateVO.getAttachFile());
 		
 		List<MultipartFile> attachFiles = updateVO.getAttachFile();
 		String fileGroupId = updateVO.getFileGroupId();

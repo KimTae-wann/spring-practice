@@ -2,6 +2,8 @@ package com.ktdsuniversity.edu.members.web;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +35,8 @@ import jakarta.validation.Valid;
 
 @Controller
 public class MembersController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(MembersController.class);
 
 	@Autowired
 	private MembersService membersService;
@@ -70,13 +74,17 @@ public class MembersController {
 			return "members/regi";
 		}
 		
-		System.out.println(writeVO.getEmail());
-		System.out.println(writeVO.getName());
-		System.out.println(writeVO.getPassword());
+		logger.debug("{}", writeVO.getEmail());
+		//System.out.println(writeVO.getEmail());
+		logger.debug("{}", writeVO.getName());
+		//System.out.println(writeVO.getName());
+		logger.debug("{}", writeVO.getPassword());
+		//System.out.println(writeVO.getPassword());
 		
 		boolean createMember = this.membersService.createNewMembers(writeVO);
 		
-		System.out.println("회원 생성 성공? " + createMember);
+		logger.debug("회원 생성 성공? {}", createMember);
+		//System.out.println("회원 생성 성공? " + createMember);
 		
 		return "redirect:/";
 	}
@@ -111,7 +119,9 @@ public class MembersController {
 		
 		membersVO.setEmail(userEmail);
 		boolean updateResult = this.membersService.updateMemberByUserEmail(membersVO);
-		System.out.println("수정 성공? " + updateResult);
+		
+		logger.debug("수정 성공? {}", updateResult);
+		//System.out.println("수정 성공? " + updateResult);
 		return "redirect:/member/view/" + userEmail;
 	}
 	
@@ -119,7 +129,8 @@ public class MembersController {
 	public String doDeleteAction(@RequestParam String id) {
 		
 		boolean updateResult = this.membersService.deleteMemberByUserEmail(id);
-		System.out.println("삭제 결과? " + updateResult);
+		logger.debug("삭제 결과? {}", updateResult);
+		//System.out.println("삭제 결과? " + updateResult);
 		
 		return "redirect:/";
 	}
@@ -157,7 +168,8 @@ public class MembersController {
 		
 		List<MembersVO> list = searchResult.getResult();
 		int searchCount = searchResult.getCount();
-		System.out.println(searchCount);
+		logger.debug("{}", searchCount);
+		//System.out.println(searchCount);
 		
 		model.addAttribute("searchResult", list);
 		model.addAttribute("searchCount", searchCount);
@@ -174,7 +186,8 @@ public class MembersController {
 	public String doLoginAction(@Valid @ModelAttribute LoginVO loginVO,
 								BindingResult bindingResult,
 								Model model,
-								HttpServletRequest request) {
+								HttpServletRequest request,
+								@RequestParam(required = false, defaultValue = "/") String go) {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("loginData", loginVO);
 			return "members/login";
@@ -196,6 +209,6 @@ public class MembersController {
 		session.setAttribute("__LOGIN_DATA__", member);
 		//session.setMaxInactiveInterval(10); // parameter ==> seconds
 		
-		return "redirect:/";
+		return "redirect:" + go;
 	}
 }

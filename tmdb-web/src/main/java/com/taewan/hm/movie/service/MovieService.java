@@ -8,4 +8,6 @@ public interface MovieService {
 	SearchResultVO findAllMovie();
 
 	boolean createNewMovie(WriteVO writeVO);
+
+	boolean deleteMovieByMovieID(String id);
 }

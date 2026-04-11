@@ -3,6 +3,20 @@
  */
 
 $().ready(function () {
+    /* 로그인 했을 때 
+        login?go=/write로 바꾸려고 함 
+        QueryString
+    */
+    // 현재 location의 pathname을 가지고 온다.
+    var pathname = location.pathname;
+    // pathname이 "/login"이 아니라면 action을 "/login?go={pathname}" 으로 수정한다.
+    if (pathname !== "/login") {
+        pathname = "?go=" + pathname;
+    } else {
+        pathname = "";
+    }
+    $('#loginVO').attr({action:"/login" + pathname});
+    
     // 이메일 포커스가 해제되면 0.15초 이후에 이메일 재 검사
     $('#email').on('blur', function() {
         setTimeout(function () {

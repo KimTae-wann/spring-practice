@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -13,6 +14,9 @@ pageEncoding="UTF-8"%>
   <body>
     <h1>회원 가입</h1>
     <!-- action -> form 내부의 value를 전송할 EndPoint -->
+    <c:if test="${not empty errorMessage }">
+        <div class="validation-error">${errorMessage }</div>
+    </c:if>
     <form:form modelAttribute="writeVO" 
                method="post" 
                action="/regist"
@@ -25,7 +29,7 @@ pageEncoding="UTF-8"%>
           id="email"
           name="email"
           placeholder="이메일을 입력하세요."
-          value="${inputData.email }"
+          value="${inputData.email } ${errorData.email}"
         />
         <form:errors path="email"
                      cssClass="validation-error"

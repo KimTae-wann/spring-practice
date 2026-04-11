@@ -1,8 +1,9 @@
 package com.taewan.hm.movie.web;
 
-import com.taewan.hm.files.web.FilesController;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.taewan.hm.movie.service.MovieService;
 import com.taewan.hm.movie.vo.MovieVO;
@@ -21,14 +23,13 @@ import jakarta.validation.Valid;
 @Controller
 public class MovieController {
 	
-	private final FilesController filesController;
+	private static final Logger logger = LoggerFactory.getLogger(MovieController.class);
+	
 	@Autowired
 	private MovieService movieService;
-
-	MovieController(FilesController filesController) {
-		this.filesController = filesController;
-	}
 	
+	
+
 	@GetMapping("/list")
 	public String viewListPage(Model model) {
 		
@@ -68,4 +69,14 @@ public class MovieController {
 		System.out.println("영화 등록 성공? " + createResult);
 		return "redirect:/list";
 	}
+	
+	@GetMapping("/delete")
+	public String doDeleteAction(@RequestParam String id, Model model) {
+		
+		boolean deleteResult = this.movieService.deleteMovieByMovieID(id);
+		logger.debug("삭제 결과? {}", deleteResult);
+		
+		return "redirect:/list";
+	}
+	
 }
